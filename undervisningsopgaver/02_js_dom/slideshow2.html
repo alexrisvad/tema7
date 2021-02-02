@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slideshow 2</title>
+    <link rel="stylesheet" href="">
+</head>
+
+<body>
+    <main>
+        <h1>Tro på det...</h1>
+        <img src="https://raw.githubusercontent.com/martinbregnhoi/Tema7E20/master/billeder/img1.png" alt="">
+        <button>Videre</button>
+        <P>Billeder brugt med tilladelse af Rasmus Bregnhøi</P>
+    </main>
+
+    <script>
+        let img = document.querySelector("img");
+        let button = document.querySelector("button");
+        let imgNummer = 1;;
+        button.addEventListener("click", nextImg);
+
+        function nextImg() {
+            button.textContent = "Videre";
+            imgNummer++;
+            img.src = `https://raw.githubusercontent.com/martinbregnhoi/Tema7E20/master/billeder/img${imgNummer}.png`;
+
+            if (imgNummer >= 8) {
+                button.textContent = "Start forfra";
+                imgNummer = 1;
+            }
+        }
+    </script>
+</body></html>
+
