@@ -39,6 +39,7 @@
         footer {
             padding: 10px 0;
         }
+
     </style>
 </head>
 
@@ -64,11 +65,25 @@
 
     <script>
         const title = document.querySelector("header h1");
+
+        const sectionTitle = document.querySelector("main h2");
+
         const article1 = document.querySelector("article:nth-child(1)");
         const img1 = document.querySelector("article:nth-child(1) img");
         const article1Heading = document.querySelector("article:nth-child(1) h3");
         const article1Content = document.querySelector("article:nth-child(1) p");
-        console.log(article1, article1Heading, img1, article1Content);
+
+        const article2 = document.querySelector("article:nth-child(2)");
+        const img2 = document.querySelector("article:nth-child(2) img");
+        const article2Heading = document.querySelector("article:nth-child(2) h3");
+        const article2Content = document.querySelector("article:nth-child(2) p");
+
+        const footer = document.querySelector("footer");
+
+        console.log(title, sectionTitle, article1, img1, article1Heading, article1Content, article2, img2, article2Heading, article2Content, footer);
+
     </script>
 
-</body></html>
+</body>
+
+</html>
