@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="da">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,27 +11,48 @@
 <body>
     <main>
         <h1>Tro på det...</h1>
-        <img src="https://raw.githubusercontent.com/martinbregnhoi/Tema7E20/master/billeder/img1.png" alt="">
+        <img src="billeder/img1.png" alt="billede 1">
         <button>Videre</button>
         <P>Billeder brugt med tilladelse af Rasmus Bregnhøi</P>
     </main>
 
     <script>
-        let img = document.querySelector("img");
-        let button = document.querySelector("button");
-        let imgNummer = 1;;
-        button.addEventListener("click", nextImg);
+        //Lav en tæller
+        let number = 0;
 
-        function nextImg() {
-            button.textContent = "Videre";
-            imgNummer++;
-            img.src = `https://raw.githubusercontent.com/martinbregnhoi/Tema7E20/master/billeder/img${imgNummer}.png`;
+        //find billede
+        const billede = document.querySelector("img");
 
-            if (imgNummer >= 8) {
-                button.textContent = "Start forfra";
-                imgNummer = 1;
+        //opret array
+        let billeder = ["img1.png", "img2.png", "img3.png", "img4.png", "img5.png", "img6.png", "img7.png", "img8.png"];
+
+
+        // klik på knap for at skifte billede
+        const knap = document.querySelector("button");
+        knap.addEventListener("click", skiftBillede);
+
+
+        //opret funktion til at skifte billede
+        function skiftBillede() {
+
+            if (number < 7) {
+                number++;
+                console.log(billeder[number]);
+                billede.src = "billeder/" + billeder[number];
+            } else {
+                number = 0;
+                billede.src = "billeder/" + billeder[number];
+            }
+
+            if (number < 7) {
+                knap.textContent = ("Videre");
+            } else {
+                knap.textContent = ("Forfra");
+
             }
         }
-    </script>
-</body></html>
 
+    </script>
+</body>
+
+</html>
