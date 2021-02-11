@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persongalleri</title>
+    <link rel="stylesheet" href="">
+
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: arial, sans-serif;
+        }
+
+        body {
+            background-color: #DED0B3;
+        }
+
+        header {
+            background-color: #600601;
+            padding: 20px;
+            text-align: right;
+            position: fixed;
+            width: 100%;
+        }
+
+        header a {
+            color: white;
+            font-size: 1.2rem;
+            text-decoration: none;
+            padding-left: 10px;
+        }
+
+        header a:hover {
+            color: #DED0B3;
+        }
+
+        header a:first-child {
+            float: left;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            font-family: serif;
+        }
+
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 1em;
+        }
+
+        main {
+            max-width: 90vw;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-gap: 10px;
+        }
+
+        article {
+            border: 1px solid white;
+            padding: 35px;
+            border-radius: 1em;
+            background-color: white;
+        }
+
+        article:hover {
+            box-shadow: 4px 4px 10px #600601;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        #kategori nav {
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        nav button {
+            padding: 5px;
+            color: black;
+            background-color: #DED0B3;
+            border-radius: 5px;
+            border: none;
+            font-size: 1.2rem;
+        }
+
+        nav button:hover {
+            /*            background-color: #f5cb87;*/
+            cursor: pointer;
+            color: #600601;
+            border-bottom: solid;
+            border-bottom-color: #600601;
+        }
+
+        nav button:focus {
+            outline-color: white;
+        }
+
+        .valgt {
+            color: #600601;
+            border-bottom: solid;
+            border-bottom-color: #600601;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            padding-top: 100px;
+        }
+
+        p {
+            margin-top: 15px;
+        }
+
+        .pris {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            background-color: #600601;
+            color: white;
+            margin-bottom: 0;
+            padding: 40px;
+        }
+
+        main {
+            padding-bottom: 40px;
+        }
+
+    </style>
+
+
+</head>
+
+
+<body>
+    <header>
+        <nav>
+            <a href="babushka.html">Bistro Babushka</a>
+            <a href="babushka.html">Menu</a>
+            <a href="">Om</a>
+            <a href="">Kontakt</a>
+        </nav>
+    </header>
+
+    <h1>Alle</h1>
+
+    <div id="kategori">
+        <nav>
+            <button data-kategori="alle" class="valgt">Alle</button>
+            <button data-kategori="forretter">Forretter</button>
+            <button data-kategori="hovedretter">Hovedretter</button>
+            <button data-kategori="desserter">Desserter</button>
+            <button data-kategori="sideorders">Sideorders</button>
+            <button data-kategori="drikkevarer">Drikkevarer</button>
+        </nav>
+    </div>
+
+    <main></main>
+
+    <template>
+        <article>
+            <img class="ret_billede" src="" alt="">
+            <div class="text_indhold">
+                <h2></h2>
+                <p class="kort_info"></p>
+                <p class="pris"></p>
+            </div>
+        </article>
+    </template>
+
+
+
+    <footer>Bistro Babushka 2021</footer>
+
+
+
+    <script>
+        const url = "https://babushka-dd8a.restdb.io/rest/menu"
+
+        const medieurl = "https://babushka-dd8a.restdb.io/media/"
+
+        const header = document.querySelector("h1");
+
+        const options = {
+            headers: {
+                'x-apikey': "600ec2fb1346a1524ff12de4"
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", start)
+        let retter;
+        let filter = "alle";
+
+        function start() {
+            const filterKnapper = document.querySelectorAll("nav button");
+            filterKnapper.forEach(knap => knap.addEventListener("click", filtrerRetter));
+            hentData();
+        }
+
+        function filtrerRetter() {
+            filter = this.dataset.kategori;
+            header.textContent = this.textContent;
+            document.querySelector(".valgt").classList.remove("valgt");
+            this.classList.add("valgt");
+            visRetter();
+        }
+
+        async function hentData() {
+            const resspons = await fetch(url, options);
+            retter = await resspons.json();
+            console.log("Retter", retter);
+            visRetter();
+        }
+
+
+        function visRetter() {
+
+            const main = document.querySelector("main");
+            const template = document.querySelector("template").content;
+            main.textContent = "";
+
+
+            retter.forEach(ret => {
+                console.log("Kategori", ret.kategori);
+                if (filter == ret.kategori || filter == "alle") {
+                    const klon = template.cloneNode(true);
+
+                    klon.querySelector("img").src = medieurl + ret.billede;
+                    klon.querySelector("img").alt = ret.navn;
+                    klon.querySelector("div h2").textContent = ret.navn;
+                    klon.querySelector("div .kort_info").textContent = ret.kortbeskrivelse;
+                    klon.querySelector("div .pris").textContent = `Pris: ${ret.pris} kr.`;
+
+                    klon.querySelector("article").addEventListener("click", () => visDetaljer(ret));
+
+                    main.appendChild(klon);
+                }
+            });
+        }
+
+        function visDetaljer(hvad) {
+            location.href = `detaljer.html?id=${hvad._id}`;
+        }
+
+    </script>
+</body>
+
+</html>

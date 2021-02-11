@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persongalleri</title>
+    <link rel="stylesheet" href="">
+
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: arial, sans-serif;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 1em;
+        }
+
+        main {
+            max-width: 90vw;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-gap: 10px;
+        }
+
+        article {
+            border: 1px solid #f5cb87;
+            padding: 35px;
+            border-radius: 1em;
+            box-shadow: 4px 4px 10px grey;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        nav {
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        nav button {
+            padding: 5px;
+            color: black;
+            background-color: white;
+            border-radius: 5px;
+        }
+
+        nav button:hover {
+            background-color: #f5cb87;
+            cursor: pointer;
+        }
+
+        .valgt {
+            background-color: #f5cb87;
+        }
+
+        h1 {
+            text-align: center;
+        }
+    </style>
+
+
+</head>
+
+
+<body>
+
+    <h1>Alle</h1>
+
+    <nav>
+        <button data-troende="alle" class="valgt">Alle</button>
+        <button data-troende="ja">Troende</button>
+        <button data-troende="nej">Ikke troende</button>
+        <button data-troende="tvivler">Tvivler</button>
+    </nav>
+
+
+    <main>
+        <template>
+            <article>
+                <img src="" alt="" class="billede">
+                <h2 class="fornavn"></h2>
+                <p class="troende"></p>
+            </article>
+        </template>
+    </main>
+
+
+
+    <script>
+        const url = "https://persongalleri-5d3e.restdb.io/rest/persongalleri";
+        const medieurl = "https://persongalleri-5d3e.restdb.io/media/";
+        const options = {
+            headers: {
+                'x-apikey': "600fe9211346a1524ff12e31"
+            }
+        };
+        const main = document.querySelector("main");
+        const template = document.querySelector("template").content;
+        document.addEventListener("DOMContentLoaded", start);
+        const header = document.querySelector("header h1");
+        let personer;
+        let filter = "alle";
+
+        function start() {
+            const filterKnapper = document.querySelectorAll("nav button");
+            filterKnapper.forEach(knap => knap.addEventListener("click", filtrerPersoner));
+            hentData();
+        }
+
+        function filtrerPersoner() {
+            filter = this.dataset.troende;
+            document.querySelector(".valgt").classList.remove("valgt");
+            this.classList.add("valgt");
+            vis();
+            header.textContent = this.textContent;
+        }
+
+        async function hentData() {
+            const respons = await fetch(url, options);
+            personer = await respons.json();
+            console.log("Personer", personer);
+            vis();
+        }
+
+        function vis(json) {
+            console.log(json);
+            main.textContent = "";
+            personer.forEach(person => {
+                if (filter == person.troende || filter == "alle") {
+                    const klon = template.cloneNode(true);
+                    klon.querySelector(".billede").src = medieurl + person.billede;
+                    klon.querySelector(".fornavn").textContent = person.fornavn;
+                    klon.querySelector(".troende").textContent = `Troende: ${person.troende}`;
+                    klon.querySelector("article").addEventListener("click", () => visDetaljer(person));
+                    main.appendChild(klon);
+                }
+            })
+        }
+
+        function visDetaljer(hvem) {
+            location.href = `02_detalje.html?id=${hvem._id}`;
+        }
+    </script>
+</body></html>

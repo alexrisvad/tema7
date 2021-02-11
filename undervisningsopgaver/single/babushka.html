@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persongalleri</title>
+    <link rel="stylesheet" href="">
+
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: arial, sans-serif;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 1em;
+        }
+
+        main {
+            max-width: 90vw;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-gap: 10px;
+        }
+
+        article {
+            border: 1px solid #f5cb87;
+            padding: 35px;
+            border-radius: 1em;
+        }
+
+        article:hover {
+            box-shadow: 4px 4px 10px grey;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        nav {
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        nav button {
+            padding: 5px;
+            color: black;
+            background-color: white;
+            border-radius: 5px;
+        }
+
+        nav button:hover {
+            background-color: #f5cb87;
+            cursor: pointer;
+        }
+
+        .valgt {
+            background-color: #f5cb87;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        p {
+            margin-top: 15px;
+        }
+
+        .pris {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 10px;
+        }
+    </style>
+
+
+</head>
+
+
+<body>
+
+    <h1>Alle</h1>
+
+    <nav>
+        <button data-kategori="alle" class="valgt">Alle</button>
+        <button data-kategori="forretter">Forretter</button>
+        <button data-kategori="hovedretter">Hovedretter</button>
+        <button data-kategori="desserter">Desserter</button>
+        <button data-kategori="sideorders">Sideorders</button>
+        <button data-kategori="drikkevarer">Drikkevarer</button>
+    </nav>
+
+    <main></main>
+
+    <template>
+        <article>
+            <img class="ret_billede" src="" alt="">
+            <div class="text_indhold">
+                <h2></h2>
+                <p class="kort_info"></p>
+                <p class="pris"></p>
+            </div>
+        </article>
+    </template>
+
+    <footer>Bistro Babushka 2021</footer>
+
+
+
+    <script>
+        const url = "https://babushka-dd8a.restdb.io/rest/menu"
+
+        const medieurl = "https://babushka-dd8a.restdb.io/media/"
+
+        const header = document.querySelector("h1");
+
+        const options = {
+            headers: {
+                'x-apikey': "600ec2fb1346a1524ff12de4"
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", start)
+        let retter;
+        let filter = "alle";
+
+        function start() {
+            const filterKnapper = document.querySelectorAll("nav button");
+            filterKnapper.forEach(knap => knap.addEventListener("click", filtrerRetter));
+            hentData();
+        }
+
+        function filtrerRetter() {
+            filter = this.dataset.kategori;
+            header.textContent = this.textContent;
+            document.querySelector(".valgt").classList.remove("valgt");
+            this.classList.add("valgt");
+            visRetter();
+        }
+
+        async function hentData() {
+            const resspons = await fetch(url, options);
+            retter = await resspons.json();
+            console.log("Retter", retter);
+            visRetter();
+        }
+
+
+        function visRetter() {
+
+            const main = document.querySelector("main");
+            const template = document.querySelector("template").content;
+            main.textContent = "";
+
+
+            retter.forEach(ret => {
+                console.log("Kategori", ret.kategori);
+                if (filter == ret.kategori || filter == "alle") {
+                    const klon = template.cloneNode(true);
+
+                    klon.querySelector("img").src = medieurl + ret.billede;
+                    klon.querySelector("img").alt = ret.navn;
+                    klon.querySelector("div h2").textContent = ret.navn;
+                    klon.querySelector("div .kort_info").textContent = ret.kortbeskrivelse;
+                    klon.querySelector("div .pris").textContent = `Pris: ${ret.pris} kr.`;
+
+                    klon.querySelector("article").addEventListener("click", () => visDetaljer(ret));
+
+                    main.appendChild(klon);
+                }
+            });
+        }
+
+        function visDetaljer(hvem) {
+            location.href = `02-detalje.html?id=${hvem._id}`;
+        }
+    </script>
+</body></html>
